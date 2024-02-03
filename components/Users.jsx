@@ -149,6 +149,7 @@ const Users = () => {
           position: ["bottomCenter"],
           size: "default",
           pageSize: 20,
+          showSizeChanger: false,
         }}
         loading={!success}
         scroll={{

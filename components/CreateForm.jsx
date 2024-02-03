@@ -20,9 +20,7 @@ const CreateForm = () => {
   const userPictureRef = useRef(null);
   const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState(null);
-  // const [birthdate, setBirthdate] = useState(null);
   const [customDescription, setCustomDescription] = useState("");
-  // const [activeStatus, setActiveStatus] = useState(false);
   const [userInfo, setUserInfo] = useState({});
 
   const ImageComponent = ({ imageUrl }) => {
@@ -50,38 +48,6 @@ const CreateForm = () => {
   const handleUserImageChange = (event) => {
     const file = event.target.files[0];
     setUserPicture(file);
-
-    // setUserInfo((prevUserInfo) => ({
-    //   ...prevUserInfo,
-    //   image: file,
-    // }));
-
-    // const form = new FormData();
-    // form.append();
-    // form.append("images", file);
-    // form.append("user_id", id);
-    // setPictureLoading(true);
-    // const { data } = await axios({
-    //   method: 'post',
-    //   url: `${API_URL}${UPDATE_USER_PICTURE}`,
-    //   data: form,
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     Authorization: `Bearer ${localStorage.getItem('access_token') ? localStorage.getItem('access_token') : null}`,
-    //   },
-    // });
-
-    // if (data.status) {
-    //   setPictureLoading(false);
-    //   // setError(null);
-    //   // setStatus(false);
-    //   // setUserPicture(data.data.path);
-    //   // message.success(data.message);
-    // } else {
-    //   // message.error(data.message);
-    //   setPictureLoading(false);
-    //   // setError(data.error);
-    // }
   };
 
   const onChange = (_, dateString) => {
