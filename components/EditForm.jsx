@@ -1,24 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import {
-  Button,
-  Form,
-  Input,
-  Upload,
-  DatePicker,
-  Checkbox,
-  Space,
-  Spin,
-} from "antd";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import Image from "next/image";
-
+import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 dayjs.extend(customParseFormat);
+
+const CKEditor = dynamic(() => import("@ckeditor/ckeditor5-react"), {
+  ssr: false,
+});
+const ClassicEditor = dynamic(
+  () => import("@ckeditor/ckeditor5-build-classic"),
+  { ssr: false }
+);
 
 const defaultPicture = "/user.svg";
 
@@ -133,9 +130,7 @@ const EditForm = ({ id }) => {
               {
                 method: "POST",
                 body: form,
-                headers: {
-                  // "Content-Type": "multipart/form-data",
-                },
+                headers: {},
               }
             );
 
@@ -168,7 +163,6 @@ const EditForm = ({ id }) => {
 
             if (response.ok) {
               router.push("/");
-              // revalidateTag("userList");
             }
           } catch (error) {
             console.log(error);

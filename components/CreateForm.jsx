@@ -1,15 +1,18 @@
 "use client";
 
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useRef, useState } from "react";
-dayjs.extend(customParseFormat);
+
+const CKEditor = dynamic(() => import("@ckeditor/ckeditor5-react"), {
+  ssr: false,
+});
+const ClassicEditor = dynamic(
+  () => import("@ckeditor/ckeditor5-build-classic"),
+  { ssr: false }
+);
 
 const defaultPicture = "/user.svg";
 
@@ -80,9 +83,7 @@ const CreateForm = () => {
               {
                 method: "POST",
                 body: form,
-                headers: {
-                  // "Content-Type": "multipart/form-data",
-                },
+                headers: {},
               }
             );
 
@@ -115,7 +116,6 @@ const CreateForm = () => {
 
             if (response.ok) {
               router.push("/");
-              // revalidateTag("userList");
             }
           } catch (error) {
             console.log(error);
@@ -164,7 +164,6 @@ const CreateForm = () => {
                 onChange={handleUserImageChange}
                 style={{ display: "none" }}
               />
-              {/* <CameraOutlined className="text-white font-extrabold" /> */}
               <p className="text-white mb-0">Change Photo</p>
             </div>
           </div>

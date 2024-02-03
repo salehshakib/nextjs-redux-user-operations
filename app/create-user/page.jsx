@@ -1,7 +1,11 @@
 import CreateForm from "@components/CreateForm";
 
 const CreateUser = () => {
-  return <CreateForm />;
+  return (
+    <div>
+      <CreateForm />
+    </div>
+  );
 };
 
 export default CreateUser;
