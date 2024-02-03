@@ -1,6 +1,7 @@
-import "@styles/globals.css";
-import Providers from "@components/Providers";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import Nav from "@components/Nav";
+import Providers from "@components/Providers";
+import "@styles/globals.css";
 
 export const metadata = {
   title: "VitaSoft Solutions",
@@ -15,10 +16,12 @@ const RootLayout = ({ children }) => {
           <div className="main">
             <div className="gradient" />
           </div>
-          <main className="app">
-            <Nav />
-            {children}
-          </main>
+          <AntdRegistry>
+            <main className="app">
+              <Nav />
+              {children}
+            </main>
+          </AntdRegistry>
         </Providers>
       </body>
     </html>

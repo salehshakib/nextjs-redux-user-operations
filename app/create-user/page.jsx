@@ -1,7 +1,7 @@
 import React from "react";
 
-const page = () => {
+const CreateUser = () => {
   return <div>create user form</div>;
 };
 
-export default page;
+export default CreateUser;
