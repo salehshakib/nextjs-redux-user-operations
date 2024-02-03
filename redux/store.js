@@ -1,14 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { userApi } from "./features/user";
+import userReducer from "./features/user/userSlice";
 
 const store = configureStore({
   reducer: {
-    [userApi.reducerPath]: userApi.reducer,
+    users: userReducer,
   },
-  middleware: (getDefaultMiddlewares) =>
-    getDefaultMiddlewares({
-      serializableCheck: false,
-    }).concat(userApi.middleware),
 });
 
 export default store;

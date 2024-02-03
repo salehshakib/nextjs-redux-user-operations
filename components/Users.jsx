@@ -1,28 +1,89 @@
 "use client";
-import { Image } from "next/image";
-import { Table } from "antd";
+
+import { setUsers } from "@redux/features/user/userSlice";
+import Image from "next/image";
+import { Table, Button } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import parse from "html-react-parser";
+import { useRouter } from "next/navigation";
 
 const Users = () => {
+  const router = useRouter();
+
+  const { users, success } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+
+  // const [userList, setUserList] = useState();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(
+          "https://tasks.vitasoftsolutions.com/userdata/",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            next: {
+              tags: ["userList"],
+            },
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+
+          dispatch(setUsers(result));
+          // setUserList(result);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchUsers();
+  }, [dispatch]);
+
   const columns = [
     {
       title: "",
       dataIndex: "image",
       key: "image",
       fixed: "left",
-      width: 35,
+      width: 50,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      width: 180,
+      width: 200,
       className: "py-0",
     },
     {
-      title: "Birthdate",
-      dataIndex: "createdAt",
-      key: "created",
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
+      align: "center",
+    },
+    {
+      title: "Joining Date",
+      dataIndex: "joinDate",
+      key: "joinDate",
+      align: "center",
+    },
+    {
+      title: "Birth Date",
+      dataIndex: "birthDate",
+      key: "birthDate",
+      align: "center",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
       align: "center",
     },
     {
@@ -41,38 +102,62 @@ const Users = () => {
 
   const usersList = [];
 
-  // list?.map((item) => {
-  //   return usersList.push({
-  //     key: id,
-  //     image: (
-  //       <div className="w-8 h-8 rounded-full overflow-hidden">
-  //         <Image
-  //           // src={profile_image ? profile_image?.path ?? defaultUserProfile : defaultUserProfile}
-  //           alt="user-image"
-  //           className="w-full h-full object-cover"
-  //         />
-  //       </div>
-  //     ),
-  //     name: (
-  //       <div className="flex flex-col">
-  //         <div
-  //           // className={`inline-block ${!user && 'pointer-events-none'} hover:cursor-pointer`}
-  //           key={id}
-  //         ></div>
-  //         <span className="text-xs text-primary dark:text-white60 ">
-  //           {/* {!user ? "" : email} */}
-  //         </span>
-  //       </div>
-  //     ),
-  //   });
-  // });
+  users?.map((item) => {
+    const {
+      id,
+      name,
+      profile_picture,
+      phone_number,
+      description,
+      birthdate,
+      joining_date,
+      active_status,
+    } = item;
+
+    console.log(item);
+
+    return usersList.push({
+      key: id,
+      image: (
+        <div className="w-8 h-8 rounded-full overflow-hidden">
+          {profile_picture && (
+            <Image
+              src={profile_picture}
+              width={30}
+              height={30}
+              alt="user-image"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
+      ),
+      name: <div className="flex flex-col">{name}</div>,
+      phone: phone_number,
+      joinDate: joining_date,
+      birthDate: birthdate,
+      description: description && parse(description),
+      status: <>{active_status ? "True" : "False"}</>,
+      action: (
+        <Button onClick={() => router.push(`/edit-user/${id}`)}>edit</Button>
+      ),
+    });
+  });
+
+  // console.log(usersList);
 
   return (
-    <>
+    <div className="bg-white text-center py-10 border">
+      <h1 className="mb-8 text-3xl font-bold">User Table</h1>
       <Table
         size="small"
         columns={columns}
-        // dataSource={depositHistoryList}
+        dataSource={usersList}
+        pagination={{
+          position: ["bottomCenter"],
+          size: "default",
+          pageSize: 10,
+        }}
+        loading={!success}
         // pagination={
         //   paginate?.total > 20 && {
         //     position: ["bottomCenter"],
@@ -90,7 +175,7 @@ const Users = () => {
           x: 1000,
         }}
       />
-    </>
+    </div>
   );
 };
 

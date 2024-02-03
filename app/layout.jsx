@@ -13,8 +13,8 @@ const RootLayout = ({ children }) => {
     <html lang="en">
       <body>
         <Providers>
-          <div className="main">
-            <div className="gradient" />
+          <div className="main bg-slate-300">
+            <div className="" />
           </div>
           <AntdRegistry>
             <main className="app">

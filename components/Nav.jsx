@@ -22,7 +22,7 @@ const Nav = () => {
             Create User
           </Link>
 
-          <Link href="/profile">
+          <Link href="/">
             <Image
               src={"/profile-pic.png"}
               width={37}
