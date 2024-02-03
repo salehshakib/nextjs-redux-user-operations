@@ -1,20 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { revalidateTag } from "next/cache";
-import {
-  Button,
-  Form,
-  Input,
-  Upload,
-  DatePicker,
-  Checkbox,
-  Space,
-  Spin,
-} from "antd";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -30,9 +20,10 @@ const CreateForm = () => {
   const userPictureRef = useRef(null);
   const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState(null);
-  const [birthdate, setBirthdate] = useState(null);
+  // const [birthdate, setBirthdate] = useState(null);
   const [customDescription, setCustomDescription] = useState("");
-  const [activeStatus, setActiveStatus] = useState(false);
+  // const [activeStatus, setActiveStatus] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
 
   const ImageComponent = ({ imageUrl }) => {
     if (pictureLoading) {
@@ -94,7 +85,10 @@ const CreateForm = () => {
   };
 
   const onChange = (_, dateString) => {
-    setBirthdate(dateString);
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      birthdate: dateString,
+    }));
   };
 
   const handleSubmit = () => {
@@ -111,8 +105,8 @@ const CreateForm = () => {
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
           form.append("description", customDescription);
-          form.append("birthdate", birthdate);
-          form.append("active_status", activeStatus);
+          form.append("birthdate", userInfo?.birthdate);
+          form.append("active_status", userInfo?.active_status);
 
           try {
             const response = await fetch(
@@ -128,7 +122,6 @@ const CreateForm = () => {
 
             if (response.ok) {
               router.push("/");
-              revalidateTag("userList");
             }
           } catch (error) {
             console.log(error);
@@ -138,8 +131,8 @@ const CreateForm = () => {
             name,
             phone_number: phone,
             description: customDescription,
-            birthdate,
-            active_status: activeStatus,
+            birthdate: userInfo?.birthdate,
+            active_status: userInfo?.active_status,
           };
 
           try {
@@ -156,7 +149,7 @@ const CreateForm = () => {
 
             if (response.ok) {
               router.push("/");
-              revalidateTag("userList");
+              // revalidateTag("userList");
             }
           } catch (error) {
             console.log(error);
@@ -166,6 +159,13 @@ const CreateForm = () => {
       .catch((error) => {
         console.error("Validation failed:", error);
       });
+  };
+
+  const handleCheckboxChange = (e) => {
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      active_status: e.target.checked,
+    }));
   };
 
   return (
@@ -251,13 +251,13 @@ const CreateForm = () => {
             }}
           />
         </Form.Item>
-        <Form.Item
-          label="Status"
-          name={"status"}
-          initialValue={activeStatus}
-          onChange={() => setActiveStatus((prev) => !prev)}
-        >
-          <Checkbox>Activity</Checkbox>
+        <Form.Item label="Status" name={"status"}>
+          <Checkbox
+            checked={userInfo.active_status}
+            onChange={handleCheckboxChange}
+          >
+            Activity
+          </Checkbox>
         </Form.Item>
       </Form>
 

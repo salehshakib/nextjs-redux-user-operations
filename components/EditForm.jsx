@@ -17,19 +17,64 @@ import Image from "next/image";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 dayjs.extend(customParseFormat);
 
 const defaultPicture = "/user.svg";
 
 const EditForm = ({ id }) => {
-  const [createForm] = Form.useForm();
+  const [editForm] = Form.useForm();
   const router = useRouter();
 
   const userPictureRef = useRef(null);
   const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState();
   const [userInfo, setUserInfo] = useState({});
+  const [customDescription, setCustomDescription] = useState("");
+  const [activeStatus, setActiveStatus] = useState(false);
+
+  const [fields, setfields] = useState([]);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await fetch(
+          `https://tasks.vitasoftsolutions.com/userdata/${id}/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          setUserInfo(result);
+          setfields([
+            {
+              name: ["name"],
+              value: result?.name,
+            },
+            {
+              name: ["phone"],
+              value: result?.phone_number,
+            },
+            {
+              name: ["birthdate"],
+              value: dayjs(result?.birthdate),
+            },
+          ]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchUserDetails();
+  }, [id]);
+
+  console.log(userInfo);
 
   const ImageComponent = ({ imageUrl }) => {
     if (pictureLoading) {
@@ -56,62 +101,90 @@ const EditForm = ({ id }) => {
   const handleUserImageChange = (event) => {
     const file = event.target.files[0];
     setUserPicture(file);
-
-    const form = new FormData();
-    form.append();
-    // form.append("images", file);
-    // form.append("user_id", id);
-    // setPictureLoading(true);
-    // const { data } = await axios({
-    //   method: 'post',
-    //   url: `${API_URL}${UPDATE_USER_PICTURE}`,
-    //   data: form,
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     Authorization: `Bearer ${localStorage.getItem('access_token') ? localStorage.getItem('access_token') : null}`,
-    //   },
-    // });
-
-    // if (data.status) {
-    //   setPictureLoading(false);
-    //   // setError(null);
-    //   // setStatus(false);
-    //   // setUserPicture(data.data.path);
-    //   // message.success(data.message);
-    // } else {
-    //   // message.error(data.message);
-    //   setPictureLoading(false);
-    //   // setError(data.error);
-    // }
   };
 
-  // const [activity, setActivity] = useState(false);
-  const [birthdate, setBirthdate] = useState();
-
-  const onChange = (date, dateString) => {
-    setBirthdate(dateString);
+  const onChange = (_, dateString) => {
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      birthdate: dateString,
+    }));
   };
 
   const handleSubmit = () => {
-    createForm
+    editForm
       .validateFields()
-      .then(() => {
-        const { name, phone, status } = createForm.getFieldsValue();
+      .then(async () => {
+        const { name, phone } = editForm.getFieldsValue();
 
-        setUserInfo((prevUserInfo) => ({
-          ...prevUserInfo,
-          name,
-          phone,
-          status,
-          joining_date: dayjs().format("YYYY-MM-DD"),
-          birthdate,
-        }));
+        if (userPicture) {
+          const form = new FormData();
 
-        console.log();
+          console.log(phone, customDescription, activeStatus, userPicture);
+          form.append("name", name);
+          form.append("profile_picture", userPicture);
+          form.append("phone_number", phone);
+          form.append("description", customDescription);
+          form.append("birthdate", userInfo?.birthdate);
+          form.append("active_status", userInfo?.active_status);
+
+          try {
+            const response = await fetch(
+              "https://tasks.vitasoftsolutions.com/userdata/",
+              {
+                method: "POST",
+                body: form,
+                headers: {
+                  // "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+
+            if (response.ok) {
+              router.push("/");
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          const userData = {
+            name,
+            phone_number: phone,
+            description: customDescription,
+            birthdate: userInfo?.birthdate,
+            active_status: userInfo?.active_status,
+          };
+
+          try {
+            const response = await fetch(
+              "https://tasks.vitasoftsolutions.com/userdata/",
+              {
+                method: "POST",
+                body: JSON.stringify(userData),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.ok) {
+              router.push("/");
+              // revalidateTag("userList");
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
       })
       .catch((error) => {
         console.error("Validation failed:", error);
       });
+  };
+
+  const handleCheckboxChange = (e) => {
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      active_status: e.target.checked,
+    }));
   };
 
   return (
@@ -124,6 +197,11 @@ const EditForm = ({ id }) => {
           ) : userPicture ? (
             <ImageComponent
               imageUrl={URL.createObjectURL(userPicture)}
+              className="w-full h-full rounded-full inline-block shadow-xl hover:shadow-2xl"
+            />
+          ) : userInfo?.profile_picture ? (
+            <ImageComponent
+              imageUrl={userInfo?.profile_picture}
               className="w-full h-full rounded-full inline-block shadow-xl hover:shadow-2xl"
             />
           ) : (
@@ -152,9 +230,10 @@ const EditForm = ({ id }) => {
 
       <Form
         name="create-user-form"
-        form={createForm}
+        form={editForm}
         autoComplete="off"
         layout="vertical"
+        fields={fields}
       >
         <Form.Item
           label="Name"
@@ -168,16 +247,7 @@ const EditForm = ({ id }) => {
         >
           <Input placeholder="User Name" />
         </Form.Item>
-        <Form.Item
-          label="Phone Number"
-          name={"number"}
-          rules={[
-            {
-              required: true,
-              message: "Missing User Phone Number",
-            },
-          ]}
-        >
+        <Form.Item label="Phone Number" name={"phone"}>
           <Input placeholder="Phone Number" type="number" />
         </Form.Item>
         <Form.Item
@@ -186,7 +256,7 @@ const EditForm = ({ id }) => {
           rules={[
             {
               required: true,
-              message: "Missing User Birthdate",
+              message: "Missing User Birth Date",
             },
           ]}
         >
@@ -200,33 +270,27 @@ const EditForm = ({ id }) => {
         <Form.Item label="Description" name={"description"}>
           <CKEditor
             editor={ClassicEditor}
-            // data="<p>Hello from CKEditor&nbsp;5!</p>"
-
+            data={userInfo?.description}
             onChange={(event, editor) => {
-              const data = editor.getData();
+              setCustomDescription(editor.getData());
             }}
           />
         </Form.Item>
-        <Form.Item label="Status" name={"status"} initialValue={false}>
-          <Checkbox>Activity</Checkbox>
+        <Form.Item label="Status" name="status">
+          <Checkbox
+            checked={userInfo.active_status}
+            onChange={handleCheckboxChange}
+          >
+            Activity
+          </Checkbox>
         </Form.Item>
       </Form>
 
       <Space className="w-full justify-end mb-5">
-        <Button
-          type=""
-          size="middle"
-          // onClick={() => setIsProfileModalOpen(false)}
-          onClick={() => router.push("/")}
-        >
+        <Button type="" size="middle" onClick={() => router.push("/")}>
           Cancel
         </Button>
-        <Button
-          type="primary"
-          size="middle"
-          // htmlType="submit"
-          onClick={handleSubmit}
-        >
+        <Button type="primary" size="middle" onClick={handleSubmit}>
           Create
         </Button>
       </Space>

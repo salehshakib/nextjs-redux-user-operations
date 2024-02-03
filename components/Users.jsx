@@ -14,8 +14,6 @@ const Users = () => {
   const { users, success } = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
-  // const [userList, setUserList] = useState();
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -36,7 +34,6 @@ const Users = () => {
           const result = await response.json();
 
           dispatch(setUsers(result));
-          // setUserList(result);
         }
       } catch (error) {
         console.log(error);
@@ -114,8 +111,6 @@ const Users = () => {
       active_status,
     } = item;
 
-    console.log(item);
-
     return usersList.push({
       key: id,
       image: (
@@ -143,8 +138,6 @@ const Users = () => {
     });
   });
 
-  // console.log(usersList);
-
   return (
     <div className="bg-white text-center py-10 border">
       <h1 className="mb-8 text-3xl font-bold">User Table</h1>
@@ -155,22 +148,9 @@ const Users = () => {
         pagination={{
           position: ["bottomCenter"],
           size: "default",
-          pageSize: 10,
+          pageSize: 20,
         }}
         loading={!success}
-        // pagination={
-        //   paginate?.total > 20 && {
-        //     position: ["bottomCenter"],
-        //     defaultCurrent: 1,
-        //     total: paginate.total,
-        //     pageSize: 20,
-        //     current: page,
-        //     onChange: (page) => {
-        //       // queryClient.invalidateQueries('getDepositHistory');
-        //       // getData(page);
-        //     },
-        //   }
-        // }
         scroll={{
           x: 1000,
         }}
