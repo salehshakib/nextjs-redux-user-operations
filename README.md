@@ -1,3 +1,7 @@
+## Live link
+
+https://nextjs-redux-user-operations-nc951c06t-salehshakib.vercel.app
+
 ## This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
