@@ -209,12 +209,14 @@ const CreateForm = () => {
           />
         </Form.Item>
         <Form.Item label="Description" name={"description"}>
-          <CKEditor
-            editor={ClassicEditor}
-            onChange={(event, editor) => {
-              setCustomDescription(editor.getData());
-            }}
-          />
+          {ClassicEditor && (
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                setCustomDescription(editor.getData());
+              }}
+            />
+          )}
         </Form.Item>
         <Form.Item label="Status" name={"status"}>
           <Checkbox
