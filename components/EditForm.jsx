@@ -66,8 +66,6 @@ const EditForm = ({ id }) => {
     fetchUserDetails();
   }, [id]);
 
-  console.log(userInfo);
-
   const ImageComponent = ({ imageUrl }) => {
     if (pictureLoading) {
       return <Spin className="absolute top-1/2 left-1/2" />;
@@ -111,6 +109,7 @@ const EditForm = ({ id }) => {
         if (userPicture) {
           const form = new FormData();
 
+          form.append("id", id);
           form.append("name", name);
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
@@ -118,11 +117,13 @@ const EditForm = ({ id }) => {
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status);
 
+          console.log(userPicture);
+
           try {
             const response = await fetch(
-              "https://tasks.vitasoftsolutions.com/userdata/",
+              `https://tasks.vitasoftsolutions.com/userdata/${id}/`,
               {
-                method: "POST",
+                method: "PUT",
                 body: form,
                 headers: {},
               }
@@ -136,6 +137,7 @@ const EditForm = ({ id }) => {
           }
         } else {
           const userData = {
+            id,
             name,
             phone_number: phone,
             description: editorContent,
@@ -145,9 +147,9 @@ const EditForm = ({ id }) => {
 
           try {
             const response = await fetch(
-              "https://tasks.vitasoftsolutions.com/userdata/",
+              `https://tasks.vitasoftsolutions.com/userdata/${id}/`,
               {
-                method: "POST",
+                method: "PUT",
                 body: JSON.stringify(userData),
                 headers: {
                   "Content-Type": "application/json",

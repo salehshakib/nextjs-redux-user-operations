@@ -8,8 +8,6 @@ const ReactQuill = dynamic(() => import("react-quill"), {
 const RichTextEditor = ({ onChange, value }) => {
   const handleChange = (content, delta, source, editor) => {
     onChange(content);
-
-    console.log(content);
   };
 
   return (
