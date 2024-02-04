@@ -16,7 +16,7 @@ const Nav = () => {
         <p className="logo_text">VitaSoft Solutions</p>
       </Link>
 
-      <div className="sm:flex hidden">
+      <div className="">
         <div className="flex gap-3 md:gap-5">
           <Link href={"/create-user"} className="black_btn">
             Create User

@@ -139,7 +139,7 @@ const Users = () => {
   });
 
   return (
-    <div className="bg-white text-center py-10 border">
+    <div className="text-center py-10 border px-5 w-screen sm:w-auto ">
       <h1 className="mb-8 text-3xl font-bold">User Table</h1>
       <Table
         size="small"
@@ -155,6 +155,7 @@ const Users = () => {
         scroll={{
           x: 1000,
         }}
+        className="w-screen sm:w-auto "
       />
     </div>
   );
