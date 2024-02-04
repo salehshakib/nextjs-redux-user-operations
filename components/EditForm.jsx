@@ -50,6 +50,7 @@ const EditForm = ({ id }) => {
           const result = await response.json();
           setUserInfo(result);
           setNameEditorContent(result?.name);
+          setEditorContent(result?.description);
           setfields([
             {
               name: ["name"],
@@ -97,7 +98,7 @@ const EditForm = ({ id }) => {
     editForm
       .validateFields()
       .then(async () => {
-        const { name, phone } = editForm.getFieldsValue();
+        const { phone } = editForm.getFieldsValue();
 
         if (userPicture) {
           const form = new FormData();
@@ -106,7 +107,7 @@ const EditForm = ({ id }) => {
           form.append("name", nameEditorContent);
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
-          form.append("description", editorContent);
+          form.append("description", editorContent ?? "");
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status);
 
@@ -133,7 +134,7 @@ const EditForm = ({ id }) => {
             id,
             name: nameEditorContent,
             phone_number: phone,
-            description: editorContent,
+            description: editorContent ?? "",
             birthdate: userInfo?.birthdate,
             active_status: userInfo?.active_status,
           };
