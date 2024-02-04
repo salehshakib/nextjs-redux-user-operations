@@ -17,7 +17,6 @@ const EditForm = ({ id }) => {
   const router = useRouter();
 
   const userPictureRef = useRef(null);
-  const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState();
   const [userInfo, setUserInfo] = useState({});
 
@@ -92,7 +91,7 @@ const EditForm = ({ id }) => {
           const form = new FormData();
 
           form.append("id", id);
-          form.append("name", name);
+          form.append("name", nameEditorContent);
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
           form.append("description", editorContent);
@@ -118,7 +117,7 @@ const EditForm = ({ id }) => {
         } else {
           const userData = {
             id,
-            name,
+            name: nameEditorContent,
             phone_number: phone,
             description: editorContent,
             birthdate: userInfo?.birthdate,
@@ -155,6 +154,11 @@ const EditForm = ({ id }) => {
       ...prevUserInfo,
       active_status: e.target.checked,
     }));
+  };
+
+  const [nameEditorContent, setNameEditorContent] = useState(userInfo?.name);
+  const handleNameContentChange = (content) => {
+    setNameEditorContent(content);
   };
 
   const [editorContent, setEditorContent] = useState("");
@@ -219,7 +223,11 @@ const EditForm = ({ id }) => {
             },
           ]}
         >
-          <Input placeholder="User Name" />
+          {/* <Input placeholder="User Name" /> */}
+          <RichTextEditor
+            value={nameEditorContent}
+            onChange={handleNameContentChange}
+          />
         </Form.Item>
         <Form.Item label="Phone Number" name={"phone"}>
           <Input placeholder="Phone Number" type="number" />

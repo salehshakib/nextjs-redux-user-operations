@@ -5,6 +5,7 @@ const initialState = {
   users: [],
   error: null,
   success: false,
+  singleUserId: undefined,
 };
 
 export const userSlice = createSlice({
@@ -15,6 +16,12 @@ export const userSlice = createSlice({
       state.loading = false;
       state.users = payload;
       state.success = true;
+    },
+    setUserDetails: (state, { payload }) => {
+      state.singleUserId = payload;
+    },
+    removeUserId: (state, { payload }) => {
+      state.singleUserId = undefined;
     },
   },
 });

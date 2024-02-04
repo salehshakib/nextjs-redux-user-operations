@@ -10,9 +10,9 @@ import { useRouter } from "next/navigation";
 
 const Users = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const { users, success } = useSelector((state) => state.users);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -126,7 +126,7 @@ const Users = () => {
           )}
         </div>
       ),
-      name: <div className="flex flex-col">{name}</div>,
+      name: <div className="flex flex-col">{parse(name)}</div>,
       phone: phone_number,
       joinDate: joining_date,
       birthDate: birthdate,

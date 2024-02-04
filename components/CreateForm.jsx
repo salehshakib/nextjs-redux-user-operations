@@ -48,8 +48,6 @@ const CreateForm = () => {
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status ?? false);
 
-          console.log(name, userPicture, phone, editorContent, userInfo);
-
           try {
             const response = await fetch(
               "https://tasks.vitasoftsolutions.com/userdata/",
