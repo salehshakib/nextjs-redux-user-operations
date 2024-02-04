@@ -20,8 +20,6 @@ const EditForm = ({ id }) => {
   const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState();
   const [userInfo, setUserInfo] = useState({});
-  // const [customDescription, setCustomDescription] = useState("");
-  // const [activeStatus, setActiveStatus] = useState(false);
 
   const [fields, setfields] = useState([]);
 
@@ -265,14 +263,6 @@ const EditForm = ({ id }) => {
         </Form.Item>
 
         <Form.Item label="Description" name={"description"}>
-          {/* <CKEditor
-              editor={ClassicEditor}
-              data={userInfo?.description}
-              onChange={(event, editor) => {
-                setCustomDescription(editor.getData());
-              }}
-            /> */}
-          {/* <Input.TextArea /> */}
           <RichTextEditor value={editorContent} onChange={handleEditorChange} />
         </Form.Item>
 

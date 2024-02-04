@@ -6,13 +6,6 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import RichTextEditor from "./RichTextEditor";
 
-// import { CKEditor, ClassicEditor } from "./CKEditor";
-
-// import CKEditorWrapper from "./CKEditor";
-
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css';
-
 const defaultPicture = "/user.svg";
 
 const CreateForm = () => {
@@ -215,11 +208,6 @@ const CreateForm = () => {
         </Form.Item>
 
         <Form.Item label="Description" name={"description"}>
-          {/* <CKEditorWrapper
-            onChange={handleEditorChange}
-            initialValue={editorContent}
-          /> */}
-          {/* <Input.TextArea /> */}
           <RichTextEditor value={editorContent} onChange={handleEditorChange} />
         </Form.Item>
 
