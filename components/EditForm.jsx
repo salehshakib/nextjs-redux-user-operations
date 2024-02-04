@@ -1,13 +1,13 @@
 "use client";
 
-import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, Space } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 dayjs.extend(customParseFormat);
 
+import ImageComponent from "./ImageComponent";
 import RichTextEditor from "./RichTextEditor";
 
 const defaultPicture = "/user.svg";
@@ -66,24 +66,6 @@ const EditForm = ({ id }) => {
     fetchUserDetails();
   }, [id]);
 
-  const ImageComponent = ({ imageUrl }) => {
-    if (pictureLoading) {
-      return <Spin className="absolute top-1/2 left-1/2" />;
-    } else {
-      return (
-        <div className="cursor-pointer w-full h-full">
-          <Image
-            src={imageUrl}
-            alt="no_image"
-            width={144}
-            height={144}
-            className="rounded-full inline-block shadow-xl hover:shadow-2xl object-cover "
-          />
-        </div>
-      );
-    }
-  };
-
   const handleUserImage = () => {
     userPictureRef.current.click();
   };
@@ -116,8 +98,6 @@ const EditForm = ({ id }) => {
           form.append("description", editorContent);
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status);
-
-          console.log(userPicture);
 
           try {
             const response = await fetch(
@@ -188,9 +168,7 @@ const EditForm = ({ id }) => {
       <h1 className="mb-3 text-3xl font-bold text-center">Edit User</h1>
       <figure className="mb-0 relative flex flex-col justify-center items-center">
         <div className="relative w-36 h-36 mb-4">
-          {pictureLoading ? (
-            <Spin className="absolute top-1/2 left-1/2" />
-          ) : userPicture ? (
+          {userPicture ? (
             <ImageComponent
               imageUrl={URL.createObjectURL(userPicture)}
               className="w-full h-full rounded-full inline-block shadow-xl hover:shadow-2xl"

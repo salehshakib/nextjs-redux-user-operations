@@ -1,9 +1,9 @@
 "use client";
 
-import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
-import Image from "next/image";
+import { Button, Checkbox, DatePicker, Form, Input, Space } from "antd";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import ImageComponent from "./ImageComponent";
 import RichTextEditor from "./RichTextEditor";
 
 const defaultPicture = "/user.svg";
@@ -13,28 +13,8 @@ const CreateForm = () => {
   const router = useRouter();
 
   const userPictureRef = useRef(null);
-  const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState(null);
-  const [customDescription, setCustomDescription] = useState("");
   const [userInfo, setUserInfo] = useState({});
-
-  const ImageComponent = ({ imageUrl }) => {
-    if (pictureLoading) {
-      return <Spin className="absolute top-1/2 left-1/2" />;
-    } else {
-      return (
-        <div className="cursor-pointer w-full h-full">
-          <Image
-            src={imageUrl}
-            alt="no_image"
-            width={144}
-            height={144}
-            className="rounded-full inline-block shadow-xl hover:shadow-2xl object-cover "
-          />
-        </div>
-      );
-    }
-  };
 
   const handleUserImage = () => {
     userPictureRef.current.click();
@@ -56,18 +36,19 @@ const CreateForm = () => {
     createForm
       .validateFields()
       .then(async () => {
-        const { name, phone, description } = createForm.getFieldsValue();
+        const { name, phone } = createForm.getFieldsValue();
 
         if (userPicture) {
           const form = new FormData();
 
-          console.log(phone, customDescription, activeStatus, userPicture);
           form.append("name", name);
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
           form.append("description", editorContent);
           form.append("birthdate", userInfo?.birthdate);
-          form.append("active_status", userInfo?.active_status);
+          form.append("active_status", userInfo?.active_status ?? false);
+
+          console.log(name, userPicture, phone, editorContent, userInfo);
 
           try {
             const response = await fetch(
@@ -80,6 +61,7 @@ const CreateForm = () => {
             );
 
             if (response.ok) {
+              console.log(response);
               router.push("/");
             }
           } catch (error) {
@@ -91,7 +73,7 @@ const CreateForm = () => {
             phone_number: phone,
             description: editorContent,
             birthdate: userInfo?.birthdate,
-            active_status: userInfo?.active_status,
+            active_status: userInfo?.active_status ?? false,
           };
 
           try {
@@ -107,6 +89,7 @@ const CreateForm = () => {
             );
 
             if (response.ok) {
+              console.log(response);
               router.push("/");
             }
           } catch (error) {
@@ -137,9 +120,7 @@ const CreateForm = () => {
       <h1 className="mb-3 text-3xl font-bold text-center">Create A New User</h1>
       <figure className="mb-0 relative flex flex-col justify-center  items-center">
         <div className="relative w-36 h-36 mb-4">
-          {pictureLoading ? (
-            <Spin className="absolute top-1/2 left-1/2" />
-          ) : userPicture ? (
+          {userPicture ? (
             <ImageComponent
               imageUrl={URL.createObjectURL(userPicture)}
               className="w-full h-full rounded-full inline-block shadow-xl hover:shadow-2xl"
