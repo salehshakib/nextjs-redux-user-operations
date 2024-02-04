@@ -3,19 +3,12 @@
 import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 dayjs.extend(customParseFormat);
 
-const CKEditor = dynamic(() => import("@ckeditor/ckeditor5-react"), {
-  ssr: false,
-});
-const ClassicEditor = dynamic(
-  () => import("@ckeditor/ckeditor5-build-classic"),
-  { ssr: false }
-);
+import RichTextEditor from "./RichTextEditor";
 
 const defaultPicture = "/user.svg";
 
@@ -27,8 +20,8 @@ const EditForm = ({ id }) => {
   const [pictureLoading, setPictureLoading] = useState(false);
   const [userPicture, setUserPicture] = useState();
   const [userInfo, setUserInfo] = useState({});
-  const [customDescription, setCustomDescription] = useState("");
-  const [activeStatus, setActiveStatus] = useState(false);
+  // const [customDescription, setCustomDescription] = useState("");
+  // const [activeStatus, setActiveStatus] = useState(false);
 
   const [fields, setfields] = useState([]);
 
@@ -60,6 +53,10 @@ const EditForm = ({ id }) => {
             {
               name: ["birthdate"],
               value: dayjs(result?.birthdate),
+            },
+            {
+              name: ["description"],
+              value: result?.description,
             },
           ]);
         }
@@ -116,11 +113,10 @@ const EditForm = ({ id }) => {
         if (userPicture) {
           const form = new FormData();
 
-          console.log(phone, customDescription, activeStatus, userPicture);
           form.append("name", name);
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
-          form.append("description", customDescription);
+          form.append("description", editorContent);
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status);
 
@@ -144,7 +140,7 @@ const EditForm = ({ id }) => {
           const userData = {
             name,
             phone_number: phone,
-            description: customDescription,
+            description: editorContent,
             birthdate: userInfo?.birthdate,
             active_status: userInfo?.active_status,
           };
@@ -179,6 +175,12 @@ const EditForm = ({ id }) => {
       ...prevUserInfo,
       active_status: e.target.checked,
     }));
+  };
+
+  const [editorContent, setEditorContent] = useState("");
+
+  const handleEditorChange = (content) => {
+    setEditorContent(content);
   };
 
   return (
@@ -261,23 +263,19 @@ const EditForm = ({ id }) => {
             }}
           />
         </Form.Item>
+
         <Form.Item label="Description" name={"description"}>
-          {ClassicEditor && (
-            <CKEditor
+          {/* <CKEditor
               editor={ClassicEditor}
               data={userInfo?.description}
               onChange={(event, editor) => {
                 setCustomDescription(editor.getData());
               }}
-            />
-          )}
-          {/* <CKEditor
-            editor={ClassicEditor}
-            onChange={(event, editor) => {
-              setCustomDescription(editor.getData());
-            }}
-          /> */}
+            /> */}
+          {/* <Input.TextArea /> */}
+          <RichTextEditor value={editorContent} onChange={handleEditorChange} />
         </Form.Item>
+
         <Form.Item label="Status" name="status">
           <Checkbox
             checked={userInfo.active_status}

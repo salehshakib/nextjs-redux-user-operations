@@ -14,11 +14,13 @@
     "@ckeditor/ckeditor5-react": "^6.2.0",
     "@reduxjs/toolkit": "^2.1.0",
     "@tinymce/tinymce-react": "^4.3.2",
+    "ckbox": "^2.3.1",
     "html-react-parser": "^5.1.1",
     "next": "14.1.0",
     "react": "^18",
     "react-ckeditor-component": "^1.1.0",
     "react-dom": "^18",
+    "react-quill": "^2.0.0",
     "react-redux": "^9.1.0"
   },
   "devDependencies": {

@@ -1,18 +1,17 @@
 "use client";
 
 import { Button, Checkbox, DatePicker, Form, Input, Space, Spin } from "antd";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import RichTextEditor from "./RichTextEditor";
 
-const CKEditor = dynamic(() => import("@ckeditor/ckeditor5-react"), {
-  ssr: false,
-});
-const ClassicEditor = dynamic(
-  () => import("@ckeditor/ckeditor5-build-classic"),
-  { ssr: false }
-);
+// import { CKEditor, ClassicEditor } from "./CKEditor";
+
+// import CKEditorWrapper from "./CKEditor";
+
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
 
 const defaultPicture = "/user.svg";
 
@@ -64,7 +63,7 @@ const CreateForm = () => {
     createForm
       .validateFields()
       .then(async () => {
-        const { name, phone } = createForm.getFieldsValue();
+        const { name, phone, description } = createForm.getFieldsValue();
 
         if (userPicture) {
           const form = new FormData();
@@ -73,7 +72,7 @@ const CreateForm = () => {
           form.append("name", name);
           form.append("profile_picture", userPicture);
           form.append("phone_number", phone);
-          form.append("description", customDescription);
+          form.append("description", editorContent);
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status);
 
@@ -97,7 +96,7 @@ const CreateForm = () => {
           const userData = {
             name,
             phone_number: phone,
-            description: customDescription,
+            description: editorContent,
             birthdate: userInfo?.birthdate,
             active_status: userInfo?.active_status,
           };
@@ -134,10 +133,16 @@ const CreateForm = () => {
     }));
   };
 
+  const [editorContent, setEditorContent] = useState("");
+
+  const handleEditorChange = (content) => {
+    setEditorContent(content);
+  };
+
   return (
     <div className="p-5 rounded-md shadow-xl w-[50%] bg-white">
       <h1 className="mb-3 text-3xl font-bold text-center">Create A New User</h1>
-      <figure className="mb-0 relative flex flex-col justify-center items-center">
+      <figure className="mb-0 relative flex flex-col justify-center  items-center">
         <div className="relative w-36 h-36 mb-4">
           {pictureLoading ? (
             <Spin className="absolute top-1/2 left-1/2" />
@@ -208,16 +213,16 @@ const CreateForm = () => {
             }}
           />
         </Form.Item>
+
         <Form.Item label="Description" name={"description"}>
-          {ClassicEditor && (
-            <CKEditor
-              editor={ClassicEditor}
-              onChange={(event, editor) => {
-                setCustomDescription(editor.getData());
-              }}
-            />
-          )}
+          {/* <CKEditorWrapper
+            onChange={handleEditorChange}
+            initialValue={editorContent}
+          /> */}
+          {/* <Input.TextArea /> */}
+          <RichTextEditor value={editorContent} onChange={handleEditorChange} />
         </Form.Item>
+
         <Form.Item label="Status" name={"status"}>
           <Checkbox
             checked={userInfo.active_status}
