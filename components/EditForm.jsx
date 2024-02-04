@@ -22,6 +22,17 @@ const EditForm = ({ id }) => {
 
   const [fields, setfields] = useState([]);
 
+  const [nameEditorContent, setNameEditorContent] = useState("");
+  const handleNameContentChange = (content) => {
+    setNameEditorContent(content);
+  };
+
+  const [editorContent, setEditorContent] = useState("");
+
+  const handleEditorChange = (content) => {
+    setEditorContent(content);
+  };
+
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -38,6 +49,7 @@ const EditForm = ({ id }) => {
         if (response.ok) {
           const result = await response.json();
           setUserInfo(result);
+          setNameEditorContent(result?.name);
           setfields([
             {
               name: ["name"],
@@ -98,6 +110,8 @@ const EditForm = ({ id }) => {
           form.append("birthdate", userInfo?.birthdate);
           form.append("active_status", userInfo?.active_status);
 
+          console.log(nameEditorContent);
+
           try {
             const response = await fetch(
               `https://tasks.vitasoftsolutions.com/userdata/${id}/`,
@@ -123,6 +137,8 @@ const EditForm = ({ id }) => {
             birthdate: userInfo?.birthdate,
             active_status: userInfo?.active_status,
           };
+
+          console.log(nameEditorContent);
 
           try {
             const response = await fetch(
@@ -154,17 +170,6 @@ const EditForm = ({ id }) => {
       ...prevUserInfo,
       active_status: e.target.checked,
     }));
-  };
-
-  const [nameEditorContent, setNameEditorContent] = useState(userInfo?.name);
-  const handleNameContentChange = (content) => {
-    setNameEditorContent(content);
-  };
-
-  const [editorContent, setEditorContent] = useState("");
-
-  const handleEditorChange = (content) => {
-    setEditorContent(content);
   };
 
   return (
